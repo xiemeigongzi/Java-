@@ -603,11 +603,12 @@ java中的数据类型，可分为两类：
  String s2 = "Monday";
  if (s1 == s2)
  {
- System.out.println("s1 == s2");}
+ System.out.println("s1 == s2");}  // true   
  else{
  System.out.println("s1 != s2");}
 }
  }
+ 
 OUT： s1 == s2
 
 
@@ -786,6 +787,7 @@ Page 187
 static 关键字不能修饰构造器， static 修饰的 类成员属于整个类，不属于单个对象
 // 是不是 因为使用 构造器的时候， 
 static 修饰的方法里， 不能有 this super 出现
+// 我记得  this () && super() 出现在 构造器中  
 static 函数 只能调用 static 函数 
 
 
@@ -800,7 +802,8 @@ Java类里只有5种成员：
 static 修饰的成员就是 类成员， 
 类成员属于整个类， 而不是单个对象 所以 不能用 static  修饰构造器 constructor
 
-当系统创建 类的对象的时候， 系统不会为 类的Field 再分配内存，
+当系统创建 类的对象的时候， 系统不会为 类的Field 再分配内存， // important 
+// 也就是说， 类里面 的 static 只有一个地址 只有一个内存地址空间
 也不会再次对 类Field 进行初始化， 对象根本不拥有对应类的 类Field
 
 也就是说，
@@ -812,14 +815,15 @@ static 修饰的成员就是 类成员，
 
 public class NullAccessStatic
 {
-	private static void test()
+	private static void test() // static  
 	{
 		System.out.println("static 修饰的类方法");
 	}
 	
 	public static void main(String[] args)
 	{
-		NullAccessStatic nas= null;// important 
+		NullAccessStatic nas= null;//  static  
+		// important :
 		nas.test();
 		test(); // 同样是 static 修饰的方法， 可以不经过对象， 直接调用
 	}
@@ -952,7 +956,8 @@ public class SingletonTest
 	}
 }
 
-
+// 再次强调： static 不能修饰  构造器 
+// static 不能出现 this() super() 
 
 
 
@@ -969,6 +974,7 @@ final 变量获得初始值之后不能被重新赋值，
 
 
 6.4.1 final 成员变量
+// final 的意思是不是： 保持这个数值， 不让这个变量再变了？？？？
 
 当执行静态初始化块的时候， 可以对 类Field （ static field ） 赋初始值；
 // static 不能修饰构造器 
@@ -976,25 +982,29 @@ final 变量获得初始值之后不能被重新赋值，
 也就是说， 
 成员变量的初始值 可以再定义的时候 指定默认值， 也可以再初始化块， 构造器中， 指定初始值 
 
+final 修饰的 不同之处： 在于 要在初始的时候 指定初始值
+
 final 修饰的 成员变量 必须由程序员显示地指定初始值
 因此：
 final 修饰的 类Field 实例 Field ： //static 
 // final static int a=6;
 
 
-类 filed ： 必须在 静态初始化块中  static {} 或者 声明该 Field 的时候指定初始值 // important： final 没有构造器 
-实例 field： 必须在非静态初始化块， 声明该 field 或者 构造器 中指定初始值 // important 
+
+static 修饰的 类 filed ： 必须在 静态初始化块中  static {} 或者 声明该 Field 的时候指定初始值 // important： final 没有构造器 
+// static 也不能修饰构造器 
+实例 field： 必须在 1. 非静态初始化块， 2. 声明该 field 或者 3. 构造器 中指定初始值 // important 
 
 static 并不能修饰构造器：
 
-final 修饰的实例 field , 要么在定义该 field 时候指定初始值， 要么在普通初始化块 
-	  或者  构造器为 field 指定初始值
+final 修饰的实例 field , 要么在定义该 1.  field 时候指定初始值， 2. 要么在普通初始化块 
+	  或者  3。 构造器为 field 指定初始值
 	  
-	  注意： 如果普通初始化块 已经为 某个实例 field 指定了初始值， 
-	  则不能再在 构造器 中 为该实例 field 指定初始值；
+	  注意： 如果 1. 普通初始化块 已经为 某个实例 field 指定了初始值， 
+	  则不能再在 2. 构造器 中 为该实例 field 指定初始值；
 	  // 如果在刚声明的时候就 指定了初始值， 能不能再在构造器里 再次指定 初始值
 	  
-final 修饰的类field ， 要么在定义该field时候指定初始值， 要么在静态初始化块中为该 field 指定了初始值，
+final 修饰的 static 修饰的 类field ， 要么在 1. 定义该field时候指定初始值， 要么在 2. 静态初始化块中为该 field 指定了初始值，
 
 实例field 不能在 静态初始化块中指定初始值， 
 因为 静态初始化块是静态成员， 不可以访问 实例 field --- 非静态成员；
@@ -1080,7 +1090,7 @@ OUT：
 Page 191 
 6.4.2 final 局部变量：
 
-系统不会对局部变量进行初始化，局部变量必须由程序员显示初始化
+系统不会对局部变量进行初始化，局部变量必须由程序员显示初始化 // important 
 
 public class FinalLocalVariableTest
 {
@@ -1354,6 +1364,7 @@ class Sub extends FinalMethodTest
 public class PrivateFinalMethodTest
 {
 		private final void test() // private 和 final 一起修饰， 
+		// final 修饰的方法 不希望被重写 
 }
 
 class Sub extends PrivateFinalMethodTest
@@ -1594,7 +1605,7 @@ Page 201
 	抽象类的实例， 
 	即使是抽象类不包括抽象方法， 这个抽象类也不能创建实例
 	
-3）。 抽象类可以包括 Field, 方法， 构造器， 初始化块， 内部类， 枚举类
+3）。 抽象类{} 里面可以包括有： 1. Field, 2. 方法， 3. 构造器， 4. 初始化块， 5. 内部类， 6. 枚举类
 	但是 抽象类的构造器不能创建实例， 主要是用于其子类调用
 	//  也就是说， 抽象类 不能创建一个对象 不能 new 
 	
@@ -1604,7 +1615,7 @@ Page 201
 Shape 类里面有两个抽象方法： abstract 修饰，
 所以 Shape 只能被定义成抽象类。 
 Shape类 里面有初始化块， 也有构造器， 
-// 抽象类里可以 有： 1. Field 2.方法  3. 构造器， 4. 初始化块， 5.内部类， 6， 枚举类
+/ 抽象类里可以 有： 1. Field 2.方法  3. 构造器， 4. 初始化块， 5. 内部类， 6， 枚举类
 但是 实际上这些都不是在创建 Shape 对象时候被调用的。
 而是创建其子类的实例时候被调用
 
@@ -1621,9 +1632,9 @@ abstract class Shape  // 抽象类
 	
 	protected String color; //Field 
 	
-	public abstract double calPerimeter(); //抽象方法
+	public abstract double calPerimeter(); //抽象方法 ： 子类需要覆盖重写 
 	
-	public abstract String getType(); //抽象方法
+	public abstract String getType(); //抽象方法 ： 子类需要 覆盖重写 
 	
 	public Shape() {} //构造函数
 	public Shape(String color) //构造函数
@@ -1724,13 +1735,14 @@ yellow 圆形
 18.84955592153876
 	
 	
-	当使用 abstract 修饰类时候， 表明这个类只能被继承。
+	当使用 abstract 修饰类时候， 表明这个类只能被继承。 // 作为 abstract的类 只能被当作父类 
 	当使用 abstract 修饰的是方法的时候，表明这个方法必须由子类提供实现，（就是重写）
 	
 	final 修饰的类不能被继承，final 修饰的方法不能被重写。
 	所以， final 和 abstract 永远不能同时使用
 	
 	abstract 不能用于修饰 Field , 不能用于修饰局部变量// 目前只看到修饰 方法  类 
+	// 那 abstract 能不能修饰 初始化块？？  应该不行吧  
 	
 	abstract 不能用于修饰构造器， 没有抽象构造器， 抽象类里面的定义的构造器
 	只能是普通的构造器
@@ -1742,7 +1754,11 @@ yellow 圆形
 	//abstract 不能修饰 构造器 不能修饰 Field，  不能修饰局部变量
 	也就是说， final static 和 abstract 不能一起用  // important 
  
- 
+    总的来说， abstract 只能修饰 类 & 方法。
+	并且， 有 abstract， 就不能有 final static 包括 static 不能和 this() super() 同时出现，
+		因为 static 不呢个修饰构造器。
+		
+		
  
 Page 204 
 抽象类的作用：
@@ -1822,6 +1838,7 @@ Page 205
 Page 206 
 6.6.2 接口的定义：
 定义接口不再使用 class 关键字， 而是使用 interface 关键字。 
+// 用 interface 替代 class 
 
 [修饰符] interface 接口名 extends 父接口 1， 父接口 2  ....
 {
@@ -1830,12 +1847,16 @@ Page 206
 }
 
 修饰符： public 或者省略， 省略的话 默认是包权限
+// 接口只能 extends 接口 但是可以 extends 多个 接口 
 一个接口可以有多个直接父类接口， 但是接口只能继承接口， 不能继承类
 
 
-接口里不能包含 构造器和初始化块的定义，
-接口里可以包含 Field (只能是常量)， 方法（只能是抽象实例方法）， 
-内部类（包含 内部接口。枚举）定义
+// Field， 局部变量， 方法， 初始化块， 构造器 ， 枚举类
+
+接口里不能包含 构造器 和 初始化块 的定义，
+
+接口里可以包含 1. Field (只能是常量)， 2. 方法（只能是抽象实例方法）， 
+3. 内部类 （包含 内部接口。枚举）定义
 
 
 接口里定义的是多个类共同的公共行为规范， 因此接口里的所有成员
@@ -1855,7 +1876,11 @@ public static final int MAX_SIZE=50;
 
 
 接口里的方法， 只能是抽象方法， 系统会自动为 接口里的方法+ abstract 修饰符来修饰，
-因为接口里的所有的方法都是抽象方法，所以不允许有静态方法，不可以用 static 
+因为接口里的所有的方法都是抽象方法，所以不允许有静态方法，不可以用 static
+// abstract 和 final ， static 不能	出现在一起
+// 接口里的所有 方法， 都是 public static  修饰的
+// 接口里的 Field， 都是 final static 默认修饰的
+  
 修饰 接口里的方法
 接口里的方法总是使用 public abstract  //这是默认的， 即使没有写出来
 
@@ -1874,7 +1899,7 @@ public class OutputPropertyTest
 {
 	public static void main(String[] args)
 	{
-	System.out.println(lee.Output.MAX_CACHE); //直接调用接口里的常量
+		System.out.println(lee.Output.MAX_CACHE); //直接调用接口里的常量
 	}
 }
 
@@ -1886,23 +1911,23 @@ Page 207
 6.6.3 接口的继承：
 接口完全支持多继承， 
 一个接口可以有多个直接父类接口，
-子接口得到父接口里 所有的 抽象方法， 常量 Field, 内部类， 枚举类定义
+子接口得到父接口里 所有的 1. 抽象方法， 2. 常量 Field, 3. 内部类， 4. 枚举类定义
 下面的应该是同一个包下的：
 
 interface interfaceA 
 {
-	int PROP_A=5;
-	void testA();
+	int PROP_A=5; // public final static  
+	void testA(); //public abstract  
 }
 
 interface interfaceB
 {
-	int PROP_B=6;
-	void testB();
+	int PROP_B=6; // public final static  
+	void testB(); // public abstract 
 }
 
-// 接口C 继承了 接口 A & B
-interface interfaceC extends interfaceA, interfaceB
+// 接口C 继承了 接口 A & B 
+interface interfaceC extends interfaceA, interfaceB // 接口继承接口： 
 {
 	int PROP_C=7;
 	void testC();
@@ -1940,7 +1965,7 @@ Page 208
 	类体部分
 }
 
-一个类实现了一个 或者多个 接口以后， 这个类必须完全实现这些接口所定义的全部抽象方法
+一个类实现了一个 或者多个 接口以后， 这个类 必须完全实现 这些接口所定义的全部抽象方法
 （也就是重写这些抽象方法）
 要不然， 该类将保留从父接口那里集成到的抽象方法，该类也必须定义成分抽象类
 
@@ -2008,6 +2033,7 @@ public class Printer implements Output, Product
 		
 		// interface Product 是父接口
 		Product p=new Printer();
+		// 所有的接口类型的引用变量都可以直接赋给  Object 类型的引用变量
 		System.out.println(p.getProduceTime());
 		Object obj=p;
 	}
@@ -2021,7 +2047,7 @@ Printer自己去写
 但是 用 Printer 类 创建的对象 好像可以直接调用 Output 和 Produce 里的方法 
 其实还是调用自己的类里面的方法
 
-// 接口有的方法有：
+// 接口里有的方法有：
 // 1. out();
 // 2. getData(String msg);
 // 3. getProduceTime();
@@ -2033,6 +2059,7 @@ Print: Android Note
 Print: Ajax
 45		
 			
+	// important 
 	
 	接口不能显示的继承任何类，但是所有的接口类型的引用变量都可以直接赋给 
 Object 类型的引用变量，所以上面的程序把 Product 类型变量直接赋给 Object 类型变量直接赋给
@@ -2102,13 +2129,14 @@ Page 214
 
 6.7.1 非静态内部类
 在方法中 也可以定义内部类；
-内部类都被作为 成员内部类来定义， 而不是作为局部内部类。
-成员内部类是一种与 Field , 方法， 构造器和初始化块相似的类成员，
+内部类都被作为 成员内部类 来定义， 而不是作为局部内部类。
+成员内部类是一种与 1. Field , 2. 方法， 3. 构造器  4. 初始化块相似的类成员，
+
 局部内部类和匿名内部类则不是类成员。
 
 class A{}
 public class B{}  
-A 和 B  相互独立
+A 和 B  相互独立 
 
 因为内部类作为其外部类的成员，所以可以使用任意访问控制符 private ， protected ， public 等修饰符
 
@@ -2256,6 +2284,205 @@ OUT:
 牛重： 37.8
 
 
+在 COw 类 里定义一个 CowLeg 非静态类， 并在 CowLeg 类的实例方法中直接
+访问 Cow 的 private 访问权限的 实例 field （weight）
+
+public class Cow
+{
+	private double weight;
+	
+	public Cow() {}
+	
+	public Cow(double weight)
+	{
+		this.weight=weight;
+	}
+	
+	private class CowLeg
+	{
+		private double length;
+		private String color;
+		
+		public CowLeg() {}
+		
+		public CowLeg(double length, String color)
+		{
+			this.length=length;
+			this.color=color;
+		}
+		
+		public void setLength(double length)
+		{
+			this.length=length;
+		}
+		
+		public double getLength()
+		{
+			return this.length;
+		}
+		
+		public void setColor(String color)
+		{
+			this.color=color;
+		}
+		
+		public String getColor()
+		{
+			return this.color;
+		}
+		
+		public void info()
+		{
+			System.out.println("color: "+color+", height: "+length);
+			System.out.println("weight: "+weight);
+		}
+	}
+	
+	public void test()
+	{
+		CowLeg c1= new CowLeg(1.12,"black-white");
+		c1.info();
+	}
+	
+	public static void main(String[] args)
+	{
+		Cow cow= new Cow(378.9);
+		cow.test();
+	}
+}
+
+OUT:
+color: black-white, height: 1.12
+weight: 378.9
+
+		
+			
+Page 216 :
+	
+	成员内部类（包括静态内部类， 非静态内部类）的 class 文件总是以这种形式：
+	OuterClass$InnerClass.class 
+	
+	在非静态类里面可以直接访问外部类的 private 成员 
+	
+	如果外部类成员变量， 内部类成员变量 与 内部类里方法的 局部变量同名， 可以
+通过 使用 this, 外部类类名.this 来区分限定
+
+
+public class DiscernVariable
+{
+	private String prop= "外部类的实例变量";
+	
+	private class InClass
+	{
+		private String prop="内部类的实例变量";
+		
+		public void info()
+		{
+			String prop="局部变量";
+			
+			System.out.println("外部类的Field值： "+DiscernVariable.this.prop);
+			
+			System.out.println("内部类的Field值： "+this.prop);
+			
+			System.out.println("局部变量的值： "+prop);
+		}
+	}
+	
+	public void test()
+	{
+		InClass in = new InClass();
+		in.info();
+	}
+	
+	public static void main(String[] args)
+	{
+		new DiscernVariable().test();
+	}
+}
+
+OUT:
+外部类的Field值： 外部类的实例变量
+内部类的Field值： 内部类的实例变量
+局部变量的值： 内部类的实例变量
+		
+	
+	
+Page 217 
+	
+	非静态 内部类 的成员可以访问外部类的 private 成员， 反过来就不能成立。
+	
+	非静态内部类的成员只在非静态内部类范围内是可知的， 并不能被外部类直接使用，
+	
+	如果外部类需要访问非静态内部类的成员， 则必须创建非静态内部类对象调用访问其 实例成员
+	
+	
+public class Outer 
+{
+	private int outProp=9;
+	
+	class Inner
+	{
+		private int inProp=5;
+		
+		public void acessOuterProp()
+		{
+			System.out.println("外部类的 OutProp："+outProp);
+			
+		}
+	}
+	
+	public void acessInnerProp()
+	{
+		System.out.println("内部类的 inProp 值： "+new Inner().inProp);
+	}
+	
+	public static void main(String[] args)
+	{
+		Outer out= new Outer();
+		out.acessInnerProp();
+	}
+}
+
+OUT:
+	内部类的 inProp 值： 5
+	
+	
+	
+Page 217 
+
+	静态类成员不能访问非静态成员的规则， 
+	外部类的静态方法， 静态代码块， 不能访问非静态内部类， 包括：
+	不能使用非静态类内部类 定义变量， 创建实例 。。。
+in all, 不允许在外部类的静态成员中直接使用非静态内部类：
+
+public class StaticTest
+{
+	private  class In{} // 非静态内部类 non-static 
+	
+	public static void main(String[] args)
+	{
+		new In(); // 编译异常， main() 方法 是静态的
+		// 无法访问 非静态成员 In 类
+	}
+}
+
+
+	Java 不允许在  非静态内部类 里定义 静态成员变量：
+	
+public class InnerNoStatic 
+{
+	private class InnerClass
+	{
+		static 
+		{
+			System.out.println("========");
+		}
+		
+		private static int inProp;
+		private static void test(){}
+	}
+}
+/  非静态 内部类里不能有静态的 1. 方法， 静态的 2. Field， 静态的 3. 初始化块
 
 
 
@@ -2456,31 +2683,114 @@ public class InnerNoStatic
 非静态内部类里不能有 静态方法， 静态Field, 静态初始化块，以上桑格静态申明都error
 
 非静态内部类里不可以有静态初始化块， 但是可以有普通的初始化块；
-非静态内部类普通的初始化块的作用 和 外部类初始化块的作用完全相同。
+非静态内部类普通的初始化块的作用 和 外部类初始化块的作用完全相同。 // important  
 		
 		
 		
 		
-		
-		
-
+Page 218 
+	
 6.7.2 静态内部类：
 如果用 static 修饰一个内部类，则这个内部类就属于外部类本身，而不属于外部类的某个对象
 
-public class 
+static 关键字的作用是 把 类的成员变成 类相关， 而不是 实例 相关， 
+那么 static  修饰的成员属于整个类， 而不是属于某个对象
 
+外部类的上一级程序单元是包， 所以不可以使用 static 修饰 外部类
+
+而内部类的上一级程序单元是 外部类， 使用 static  修饰可以将内部类变成外部类相关，
+而不是 与 外部类的实例相关， 
+所以， static 关键字可以不可以修饰 外部类， 但是可以修饰 内部类
+
+
+public class StaticInnerClassTest
+{
+	private int prop1=5;  // non-static 
+	private static int prop2=9; // static 
+	
+	static class StaticInnerClass // 静态内部类：
+	{
+		private static int age; // static  
+		
+		public void accessOuterProp() // 普通的实例方法， 但是依然不能 
+		//不能访问 外部类中的实例变量 prop1 , 但是可以访问 静态的类变量 prop2 
+		{
+			System.out.println(prop1);
+			// 静态内部类无法访问外部类的实例成员  
+			
+			System.out.println(prop2);
+			// 正常 
+		}
+	}
+}
+
+OUT：
+
+	all in all, 	
+	静态内部类 可以包含静态成员， 也可以包含非静态成员
+	
+	静态内部类 不能访问外部类的实例成员， 只能访问外部类的类成员。
+	即使是  静态内部类的实例方法也不能访问外部类的实例成员，只能访问外部类的静态成员
+
+
+外部类依然不能直接访问静态内部类的成员， 但是可以 使用静态内部类的类名作为调用者来
+访问静态内部类的类成员	。
+也可以使用 静态内部类对象作为调用者来访问静态内部类的实力成员
+
+
+public class AccessStaticInnerClass
+{
+	static class StaticInnerClass
+	{
+		private static int prop1=5;
+		private int prop2=9;
+	}
+	
+	public void accessInnerProp()
+	{
+		System.out.println(prop1); // error : 不能直接访问
+		
+		System.out.println(StaticInnerClass.prop1); // 内部类名字.类变量名
+		
+		System.out.println(prop2); //error 
+		
+		System.out.println(new StaticInnerClass().prop2); 
+		// 对于调用 静态内部类里的 普通实例变量， 需要 创建一个 静态内部类的对象来调用
+	}
+}
+
+
+		
+		
+	接口里的 变量都是默认的 public static final 修饰；
+	方法是 ： public abstract 修饰；
+	
+	接口里可以包含 1. Field (只能是常量)， 2. 方法（只能是抽象实例方法）， 
+	3. 内部类 （包含 内部接口。枚举）定义
+
+	
+	Java还 可以在接口里定义内部类， 接口里定义的 内部类默认 使用的是： public static 修饰
+	接口的内部类只能是静态内部类
+	
 
 
 
 Page 220
 6.7.3 使用内部类:
+
+	定义类的主要作用： 定义变量， 创建实例 作为父类被继承
+	
+	内部类定义变量和创建实例与外部类存在一些差异：
+
 (1) 在外部类的内部使用内部类：
-	通过 new 调用内部类构造器创建实例
+	可以通过内部类类名定义变量，  通过 new 调用内部类构造器创建实例
 	区别： 
-	不要在外部类的静态成员（包括静态方法和静态初始化块）中使用非静态内部类，因为静态成员不能访问非静态成员
+	不要在外部类的静态成员（包括静态方法和静态初始化块）中使用非静态内部类，
+	因为静态成员不能访问非静态成员
 	
 	
 （2） 在外部类以外使用非静态内部类：
+	private 修饰的内部类只能在 外部类中使用
 	
 
 class Out
@@ -2498,10 +2808,149 @@ public class CreateInnerInstance
 {
 	public static void main(String[] args)
 	{
-		Out.In in= new Out().new In("测试信息")；
+		Out.In in= new Out().new In("测试信息");
+		
+		在外部类以外的地方创建非静态内部类实例 必须 使用外部类实例 
+		和 new 来调用 非静态内部类的构造器  
+		
+		// Out.In in= new Out().new In("测试信息");
+		/*
+			如何定义 OuterClass.InnerClass 形式的内部变量：
+			
+			Out.In in;
+			Out out=new Out();
+			in= out.new In("测试信息")；
+		
+		*/
 	}
 }
 
+
+Out.In in= new Out(). new In("测试信息");
+创建一个 非静态内部类的对象， 非静态内部类的构造器必须使用外部类对象来调用 
+
+
+
+
+Page 221 
+	创建非静态内部类的子类时， 必须保证让 子类构造器可以调用 非静态内部类的构造器， 
+调用非静态内部类的构造器时， 必须存在一个外部对象
+如下：  定义了一个子类继承 Out 类的非静态内部类 In类。
+
+
+
+class Out
+{
+	class In
+	{
+		public In(String msg)
+		{
+			System.out.println(msg);
+		}
+	}
+}
+
+public class CreateInnerInstance 
+{
+	public static void main(String[] args)
+	{
+		Out.In in= new Out().new In("测试信息"); // 构造函数 
+		
+		在外部类以外的地方创建非静态内部类实例 必须 使用外部类实例 
+		和 new 来调用 非静态内部类的构造器  
+		
+		// Out.In in= new Out().new In("测试信息");
+		/*
+			如何定义 OuterClass.InnerClass 形式的内部变量：
+			
+			Out.In in;
+			Out out=new Out();
+			in= out.new In("测试信息")；
+		
+		*/
+	}
+}
+
+public class SubClass extends Out.In
+{
+
+	public SubClass(Out out)
+	{
+		非静态内部类 In 类的构造器必须使用外部类对象来调用，
+		super() 代表调用 In 类的构造器， out 代表 外部类对象 
+		
+		out.super("hello"); // 构造器中有 this() super(); 
+	}
+}
+
+需要创建一个 SubClass 对象的时候， 先要创建一个 Out 对象， 
+
+
+（3） 在外部类以外使用静态内部类：
+	因为 静态内部类 是 外部类 类相关的， 因此 创建内部类 对象时候无需创建外部类对象
+	
+	new OuterClass.InnerConstructor()
+	
+class StaticOut
+{
+	static class StaticIn
+	{
+		public StaticIn()
+		{
+			System.out.println("静态内部类的构造器");
+		}
+	}
+}
+
+public class CreateStaticInnerInstance
+{
+	public static void main(String[] args)
+	{
+		StaticOut.StaticIn in= new StaticOut.StaticIn();
+	}
+}
+
+不管是 静态内部类 还是 非静态内部类， 它们的声明变量的语法完全一样
+区别只是在： 创建内部类对象的时候， 静态内部类只需要使用外部类既可以调用构造器
+而非静态内部类必须使用外部类对象来调用构造器
+
+
+创建静态内部类的子类：
+如： 为静态内部类 StaticIn 类定义了一个空的子类：
+
+public class StaticSubClass extends StaticOut.StaticIn{}
+
+
+
+Page  223 
+6.7.4 局部内部类：
+
+如果把 一个 内部类放在方法里定义， 这个内部类就是一个局部内部类
+局部内部类仅仅在方法里有效， 
+由于 局部内部类不能再外部类的方法以外的地方使用， 因此局部内部类也不能使用访问
+控制符和 static 修饰符修饰：
+
+如果需要局部内部类定义变量， 创建实例或者派生子类， 只能再局部内部类所在的方法内进行
+
+public class LocalInnerClass
+{
+	public static void main(String[] args)
+	{
+		class InnerBase 
+		{
+			int a;
+		}
+		
+		class InnerSub extends InnerBase
+		{
+			int b;
+		}
+		
+		InnerSub  is = new InnerSub();
+		is.a=5;
+		is.b=8;
+	}
+}
 
 
 
